@@ -1,7 +1,7 @@
-﻿using Avalonia.Threading;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
+using System.Text;
 using TickLib;
 
 namespace TickTest
@@ -10,12 +10,16 @@ namespace TickTest
     {
         private readonly ITickEngine _engine = new TickEngine();
         private readonly ITickActionQueue _queue = new TickActionQueue();
+        private readonly StringBuilder _logBuilder = new();
 
         [ObservableProperty]
         private int _number = 0;
 
         [ObservableProperty]
         private string? _logText;
+
+        [ObservableProperty]
+        private int _caretIndex = 0;
 
         [ObservableProperty]
         public bool _isTimerRunning;
@@ -32,8 +36,6 @@ namespace TickTest
         [RelayCommand]
         public void Stop()
         {
-            System.Diagnostics.Trace.WriteLine($"Stop command");
-
             _engine.Stop();
             _engine.Unregister(_queue);
 
@@ -49,7 +51,10 @@ namespace TickTest
 
         private void WriteLog(string message)
         {
-            LogText += $"{message}\n";
+            _logBuilder.AppendLine(message);
+
+            LogText = _logBuilder.ToString();
+            CaretIndex = LogText.Length;
         }
 
         public void Dispose()

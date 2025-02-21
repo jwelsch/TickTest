@@ -1,6 +1,6 @@
 ﻿namespace TickLib
 {
-    public interface ITickEngine
+    public interface ITickEngine : IDisposable
     {
         void Start(int periodMilliseconds);
 
@@ -16,10 +16,10 @@
         private const int _periodMillisecondsMin = 50;
 
         private readonly Lock _timerLock = new();
+        private readonly List<ITickAction> _actions = new();
 
         private System.Timers.Timer? _timer;
         private int _periodMilliseconds;
-        private List<ITickAction> _actions = new();
 
         public void Start(int periodMilliseconds)
         {
@@ -102,7 +102,21 @@
                 }
 
                 var span = DateTime.Now - start;
+
                 System.Diagnostics.Trace.WriteLine($"Action list took {span.TotalMilliseconds} ms.");
+            }
+        }
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+
+            lock (_timerLock)
+            {
+                _timer?.Dispose();
+                _timer = null;
+
+                _actions.Clear();
             }
         }
     }

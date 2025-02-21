@@ -25,6 +25,6 @@
       <Button IsEnabled="{Binding IsTimerRunning}" Command="{Binding EnqueueCommand}">Enqueue</Button>
       <TextBox Margin="5,0,0,0" Text="{Binding Number, Converter={StaticResource ToStringConverter}}" IsReadOnly="True" />
     </StackPanel>
-    <TextBox Margin="5" IsReadOnly="True" Text="{Binding LogText}" />
+    <TextBox Margin="5" IsReadOnly="True" Text="{Binding LogText}" CaretIndex="{Binding CaretIndex}" />
   </DockPanel>
 </Window>
