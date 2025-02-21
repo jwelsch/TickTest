@@ -6,9 +6,13 @@ using TickLib;
 
 namespace TickTest
 {
-    public partial class MainViewModel : ObservableObject, ITickAction, IDisposable
+    public partial class MainViewModel : ObservableObject, IDisposable
     {
         private readonly ITickEngine _engine = new TickEngine();
+        private readonly ITickActionQueue _queue = new TickActionQueue();
+
+        [ObservableProperty]
+        private int _number = 0;
 
         [ObservableProperty]
         private string? _logText;
@@ -21,7 +25,7 @@ namespace TickTest
         {
             IsTimerRunning = true;
 
-            _engine.Register(this);
+            _engine.Register(_queue);
             _engine.Start(1000);
         }
 
@@ -31,17 +35,21 @@ namespace TickTest
             System.Diagnostics.Trace.WriteLine($"Stop command");
 
             _engine.Stop();
-            _engine.Unregister(this);
+            _engine.Unregister(_queue);
 
             IsTimerRunning = false;
         }
 
-        public void Do()
+        [RelayCommand]
+        public void Enqueue()
         {
-            Dispatcher.UIThread.Invoke(() =>
-            {
-                LogText += "Tick\n";
-            });
+            _queue.Enqueue(new WriteLogAction(WriteLog, Number.ToString()));
+            Number++;
+        }
+
+        private void WriteLog(string message)
+        {
+            LogText += $"{message}\n";
         }
 
         public void Dispose()
@@ -49,7 +57,7 @@ namespace TickTest
             GC.SuppressFinalize(this);
 
             _engine.Stop();
-            _engine.Unregister(this);
+            _engine.Unregister(_queue);
         }
     }
 }

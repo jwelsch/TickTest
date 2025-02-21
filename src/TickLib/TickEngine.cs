@@ -47,12 +47,7 @@
         {
             lock (_timerLock)
             {
-                if (_timer == null)
-                {
-                    return;
-                }
-
-                _timer.Dispose();
+                _timer?.Dispose();
                 _timer = null;
             }
         }
@@ -90,8 +85,15 @@
 
         private void TimerCallback(object? sender, System.Timers.ElapsedEventArgs e)
         {
+            // This will also prevent more than one callback executing at once.
             lock (_timerLock)
             {
+                // If the timer has been stopped ignore any other callbacks.
+                if (_timer == null)
+                {
+                    return;
+                }
+
                 var start = DateTime.Now;
 
                 for (var i = 0; i < _actions.Count; i++)

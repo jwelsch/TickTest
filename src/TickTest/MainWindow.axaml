@@ -3,16 +3,28 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:TickTest"
+        xmlns:converters="using:TickTest"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TickTest.MainWindow"
         x:DataType="vm:MainViewModel"
         Title="TickTest"
+        WindowStartupLocation="CenterScreen"
+        Width="800"
+        Height="600"
         >
+  <Window.Resources>
+    <converters:ToStringConverter x:Key="ToStringConverter"/>
+  </Window.Resources>
+
   <DockPanel>
     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="5">
-      <Button x:Name="_startButton" IsEnabled="{Binding !IsTimerRunning}" Command="{Binding StartCommand}">Start</Button>
-      <Button x:Name="_stopButton" IsEnabled="{Binding IsTimerRunning}" Command="{Binding StopCommand}">Stop</Button>
+      <Button IsEnabled="{Binding !IsTimerRunning}" Command="{Binding StartCommand}">Start</Button>
+      <Button IsEnabled="{Binding IsTimerRunning}" Command="{Binding StopCommand}">Stop</Button>
     </StackPanel>
-    <TextBox x:Name="_logTextBox" Margin="5" IsReadOnly="True" Text="{Binding LogText}" />
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="5">
+      <Button IsEnabled="{Binding IsTimerRunning}" Command="{Binding EnqueueCommand}">Enqueue</Button>
+      <TextBox Margin="5,0,0,0" Text="{Binding Number, Converter={StaticResource ToStringConverter}}" IsReadOnly="True" />
+    </StackPanel>
+    <TextBox Margin="5" IsReadOnly="True" Text="{Binding LogText}" />
   </DockPanel>
 </Window>
