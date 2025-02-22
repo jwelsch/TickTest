@@ -14,17 +14,21 @@
         >
   <Window.Resources>
     <converters:ToStringConverter x:Key="ToStringConverter"/>
+    <converters:RadiusConverter x:Key="RadiusConverter"/>
   </Window.Resources>
 
   <DockPanel>
     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="5">
-      <Button IsEnabled="{Binding !IsTimerRunning}" Command="{Binding StartCommand}">Start</Button>
-      <Button IsEnabled="{Binding IsTimerRunning}" Command="{Binding StopCommand}">Stop</Button>
+      <Button IsEnabled="{Binding !IsTimerRunning}" Click="OnClickedStart">Start</Button>
+      <Button IsEnabled="{Binding IsTimerRunning}" Click="OnClickedStop">Stop</Button>
+      <CheckBox IsChecked="{Binding ShowLines}" Margin="20,0,0,0">Show lines</CheckBox>
     </StackPanel>
-    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="5">
-      <Button IsEnabled="{Binding IsTimerRunning}" Command="{Binding EnqueueCommand}">Enqueue</Button>
-      <TextBox Margin="5,0,0,0" Text="{Binding Number, Converter={StaticResource ToStringConverter}}" IsReadOnly="True" />
-    </StackPanel>
-    <TextBox Margin="5" IsReadOnly="True" Text="{Binding LogText}" CaretIndex="{Binding CaretIndex}" />
+    <Border Margin="5" BorderBrush="White" BorderThickness="1">
+      <Canvas x:Name="_fieldCanvas">
+        <Line x:Name="_horizontalLine" StrokeThickness="1" Stroke="Red" StartPoint="{Binding HorizontalStartPoint}" EndPoint="{Binding HorizontalEndPoint}" IsVisible="{Binding ShowLines}" />
+        <Line x:Name="_verticalLine" StrokeThickness="1" Stroke="Red" StartPoint="{Binding VerticalStartPoint}" EndPoint="{Binding VerticalEndPoint}" IsVisible="{Binding ShowLines}" />
+        <Ellipse x:Name="_ellipse" Fill="Gray" Width="{Binding EllipseRadius, Converter={StaticResource RadiusConverter}}" Height="{Binding EllipseRadius, Converter={StaticResource RadiusConverter}}" Canvas.Left="{Binding EllipseX}" Canvas.Top="{Binding EllipseY}" />
+      </Canvas>
+    </Border>
   </DockPanel>
 </Window>

@@ -1,68 +1,59 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using System;
-using System.Text;
-using TickLib;
+﻿using Avalonia;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace TickTest
 {
-    public partial class MainViewModel : ObservableObject, IDisposable
+    public partial class MainViewModel : BaseViewModel
     {
-        private readonly ITickEngine _engine = new TickEngine();
-        private readonly ITickActionQueue _queue = new TickActionQueue();
-        private readonly StringBuilder _logBuilder = new();
+        private Rect? _bounds;
 
         [ObservableProperty]
-        private int _number = 0;
+        private double _ellipseRadius = 10.0;
 
         [ObservableProperty]
-        private string? _logText;
+        private double _ellipseX;
 
         [ObservableProperty]
-        private int _caretIndex = 0;
+        private double _ellipseY;
 
         [ObservableProperty]
-        public bool _isTimerRunning;
+        private bool _showLines;
 
-        [RelayCommand]
+        [ObservableProperty]
+        private Point? _horizontalStartPoint;
+
+        [ObservableProperty]
+        private Point? _horizontalEndPoint;
+
+        [ObservableProperty]
+        private Point? _verticalStartPoint;
+
+        [ObservableProperty]
+        private Point? _verticalEndPoint;
+
+        public void Initialize(Rect bounds)
+        {
+            _bounds = bounds;
+
+            HorizontalStartPoint = new Point(bounds.Left, bounds.Center.Y);
+            HorizontalEndPoint = new Point(bounds.Right, bounds.Center.Y);
+            VerticalStartPoint = new Point(bounds.Center.X, bounds.Top);
+            VerticalEndPoint = new Point(bounds.Center.X, bounds.Bottom);
+
+            EllipseX = _bounds.Value.Center.X - EllipseRadius;
+            EllipseY = _bounds.Value.Center.Y - EllipseRadius;
+
+            System.Diagnostics.Trace.WriteLine($"Initialized model - EllipseX: {EllipseX}, EllipseY: {EllipseY}");
+        }
+
         public void Start()
         {
-            IsTimerRunning = true;
-
-            _engine.Register(_queue);
-            _engine.Start(1000);
+            StartEngine(1000);
         }
 
-        [RelayCommand]
         public void Stop()
         {
-            _engine.Stop();
-            _engine.Unregister(_queue);
-
-            IsTimerRunning = false;
-        }
-
-        [RelayCommand]
-        public void Enqueue()
-        {
-            _queue.Enqueue(new WriteLogAction(WriteLog, Number.ToString()));
-            Number++;
-        }
-
-        private void WriteLog(string message)
-        {
-            _logBuilder.AppendLine(message);
-
-            LogText = _logBuilder.ToString();
-            CaretIndex = LogText.Length;
-        }
-
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
-
-            _engine.Stop();
-            _engine.Unregister(_queue);
+            StopEngine();
         }
     }
 }
