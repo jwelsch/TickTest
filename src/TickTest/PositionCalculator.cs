@@ -71,5 +71,10 @@ namespace TickTest
 
             return new Point(startPosition.X + deltaX, startPosition.Y + deltaY);
         }
+
+        private bool DetectCollision(Rect bounds, Point point)
+        {
+
+        }
     }
 }
