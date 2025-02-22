@@ -21,13 +21,15 @@
     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="5">
       <Button IsEnabled="{Binding !IsTimerRunning}" Click="OnClickedStart">Start</Button>
       <Button IsEnabled="{Binding IsTimerRunning}" Click="OnClickedStop">Stop</Button>
-      <CheckBox IsChecked="{Binding ShowLines}" Margin="20,0,0,0">Show lines</CheckBox>
+      <Label x:Name="_testLabel" VerticalAlignment="Center">Tick count:</Label>
+      <Label x:Name="_tickCountLabel" VerticalAlignment="Center" Content="{Binding TickCount}" />
     </StackPanel>
+    <CheckBox DockPanel.Dock="Bottom" IsChecked="{Binding ShowLines}" Margin="5">Show lines</CheckBox>
     <Border Margin="5" BorderBrush="White" BorderThickness="1">
       <Canvas x:Name="_fieldCanvas">
         <Line x:Name="_horizontalLine" StrokeThickness="1" Stroke="Red" StartPoint="{Binding HorizontalStartPoint}" EndPoint="{Binding HorizontalEndPoint}" IsVisible="{Binding ShowLines}" />
         <Line x:Name="_verticalLine" StrokeThickness="1" Stroke="Red" StartPoint="{Binding VerticalStartPoint}" EndPoint="{Binding VerticalEndPoint}" IsVisible="{Binding ShowLines}" />
-        <Ellipse x:Name="_ellipse" Fill="Gray" Width="{Binding EllipseRadius, Converter={StaticResource RadiusConverter}}" Height="{Binding EllipseRadius, Converter={StaticResource RadiusConverter}}" Canvas.Left="{Binding EllipseX}" Canvas.Top="{Binding EllipseY}" />
+        <Ellipse x:Name="_ellipse" Fill="Gray" Width="{Binding EllipseRadius, Converter={StaticResource RadiusConverter}}" Height="{Binding EllipseRadius, Converter={StaticResource RadiusConverter}}" Canvas.Left="{Binding EllipsePosition.X}" Canvas.Top="{Binding EllipsePosition.Y}" />
       </Canvas>
     </Border>
   </DockPanel>

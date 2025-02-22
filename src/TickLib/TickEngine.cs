@@ -20,6 +20,7 @@
 
         private System.Timers.Timer? _timer;
         private int _periodMilliseconds;
+        private ulong _tickCount;
 
         public void Start(int periodMilliseconds)
         {
@@ -88,6 +89,8 @@
             // This will also prevent more than one callback executing at once.
             lock (_timerLock)
             {
+                //System.Diagnostics.Trace.WriteLine($"Tick: {_tickCount}");
+
                 // If the timer has been stopped ignore any other callbacks.
                 if (_timer == null)
                 {
@@ -101,9 +104,11 @@
                     _actions[i].Do();
                 }
 
-                var span = DateTime.Now - start;
+                //var span = DateTime.Now - start;
 
-                System.Diagnostics.Trace.WriteLine($"Action list took {span.TotalMilliseconds} ms.");
+                //System.Diagnostics.Trace.WriteLine($"Action list took {span.TotalMilliseconds} ms.");
+
+                _tickCount++;
             }
         }
 

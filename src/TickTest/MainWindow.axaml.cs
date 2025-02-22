@@ -10,18 +10,6 @@ namespace TickTest
             InitializeComponent();
         }
 
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-
-            //if (DataContext == null || DataContext is not MainViewModel model)
-            //{
-            //    return;
-            //}
-
-            //model.Initialize(_fieldCanvas.Bounds);
-        }
-
         protected override void OnLoaded(RoutedEventArgs e)
         {
             base.OnLoaded(e);

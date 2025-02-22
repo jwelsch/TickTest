@@ -4,18 +4,17 @@
     {
         int Count { get; }
 
-        void Enqueue(ITickAction action);
+        void Enqueue(IQueuedAction action);
     }
 
     public class TickActionQueue : ITickActionQueue
     {
         private readonly Lock _sync = new();
-
-        private Queue<ITickAction> _queue = new();
+        private readonly Queue<IQueuedAction> _queue = new();
 
         public int Count => _queue.Count;
 
-        public void Enqueue(ITickAction action)
+        public void Enqueue(IQueuedAction action)
         {
             lock (_sync)
             {
@@ -27,11 +26,24 @@
         {
             lock (_sync)
             {
-                ITickAction? action = null;
+                IQueuedAction? action;
+                var waitingActions = new List<IQueuedWaitAction>();
 
                 while (_queue.TryDequeue(out action))
                 {
-                    action.Do();
+                    if (action is IQueuedWaitAction waitAction
+                        && !waitAction.CanExecute())
+                    {
+                        waitingActions.Add(waitAction);
+                        continue;
+                    }
+
+                    action.Execute();
+                }
+
+                for (var i = 0; i < waitingActions.Count; i++)
+                {
+                    _queue.Enqueue(waitingActions[i]);
                 }
             }
         }
